@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Plagrisim Detector2.O - Manage Keywords</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <style>
+      .keyword-form { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+      .keyword-form input { padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px; }
+      .keyword-form input[type="text"] { flex: 1; min-width: 200px; }
+      .keyword-form button { background: var(--accent); color: #fff; padding: 10px 16px; border-radius: 6px; border: none; cursor: pointer; }
+      .keyword-form button:hover { opacity: 0.95; }
+      table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+      table th { background: #f3f4f6; padding: 12px; text-align: left; border-bottom: 2px solid #e5e7eb; font-weight: 600; }
+      table td { padding: 12px; border-bottom: 1px solid #e5e7eb; }
+      table tbody tr:hover { background: #f9fafb; }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container">
+        <h1>Plagrisim Detector2.O</h1>
+        <p class="tag">Manage keywords for plagiarism detection</p>
+      </div>
+    </header>
+
+    <main class="container">
+      <h2>Manage Keywords</h2>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flashes">
+            {% for category, msg in messages %}
+              <div class="flash {{ category }}">{{ msg|safe }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <section class="card">
+        <form method="post" class="keyword-form">
+          <input type="text" name="keyword" placeholder="Enter keyword" required />
+          <input type="number" step="0.1" name="weight" value="1.0" min="0" placeholder="Weight" />
+          <button type="submit">Add / Update</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <h3>Keywords</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Keyword</th>
+              <th>Weight</th>
+            </tr>
+          </thead>
+          <tbody>
+        {% for kw, w in keywords %}
+          <tr>
+            <td>{{ kw }}</td>
+            <td>{{ w }}</td>
+          </tr>
+        {% endfor %}
+          </tbody>
+        </table>
+      </section>
+
+      <p class="muted"><a href="/">← Back to Home</a></p>
+    </main>
+
+    <footer class="footer">
+      <div class="container">&copy; Plagrisim Detector2.O</div>
+    </footer>
+  </body>
+</html>

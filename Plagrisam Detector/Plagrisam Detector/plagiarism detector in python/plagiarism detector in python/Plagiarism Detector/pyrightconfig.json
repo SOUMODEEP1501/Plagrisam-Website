@@ -1,0 +1,16 @@
+{
+  "pythonVersion": "3.14",
+  "pythonPath": ".venv/Scripts/python.exe",
+  "executionEnvironments": [
+    {
+      "root": ".",
+      "pythonVersion": "3.14",
+      "pythonPath": ".venv/Scripts/python.exe"
+    }
+  ],
+  "include": ["."],
+  "exclude": [".venv", "__pycache__"],
+  "typeCheckingMode": "off",
+  "reportMissingImports": false,
+  "reportUndefinedVariable": false
+}

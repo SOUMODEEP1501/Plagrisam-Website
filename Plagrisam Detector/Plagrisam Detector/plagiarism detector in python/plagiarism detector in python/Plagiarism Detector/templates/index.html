@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Plagrisim Detector2.O</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <video id="bg-video" autoplay loop muted playsinline>
+      <source src="{{ url_for('static', filename='Tech.mp4') }}" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+
+    <header class="topbar">
+      <div class="container">
+        <div class="header-content">
+          <div>
+            <h1>Plagrisim Detector2.O</h1>
+            <p class="tag">Compare documents quickly — upload files or paste text</p>
+          </div>
+          <button class="btn-about" id="aboutBtn">About Us</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <div id="mainContent" class="main-content-section">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flashes">
+              {% for category, msg in messages %}
+                <div class="flash {{ category }}">{{ msg|safe }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+      <section class="card">
+        <form method="post" enctype="multipart/form-data" id="analyzeForm">
+          <div class="form-row">
+            <label class="radio">
+              <input type="radio" name="input_mode" value="files" {% if input_mode!='text' %}checked{% endif %}>
+              Upload files
+            </label>
+            <label class="radio">
+              <input type="radio" name="input_mode" value="text" {% if input_mode=='text' %}checked{% endif %}>
+              Enter text
+            </label>
+          </div>
+
+          <div id="file-section" class="form-row">
+            <input type="file" name="files" multiple class="file-input" />
+            <p class="hint">Allowed: .pdf, .docx, .txt</p>
+          </div>
+
+          <div id="text-section" class="form-row" data-hidden="{% if input_mode!='text' %}true{% endif %}">
+            <textarea name="text1" rows="6" placeholder="Paste text 1">{{ text1 or '' }}</textarea>
+            <textarea name="text2" rows="6" placeholder="Paste text 2">{{ text2 or '' }}</textarea>
+          </div>
+
+          <div class="form-row actions">
+            <label class="checkbox"><input type="checkbox" name="use_keywords"> Use keyword-based checking</label>
+            <button type="submit" class="btn">Analyze</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="results">
+        <h2>Uploaded / Provided</h2>
+        <ul class="file-list">
+          {% for f in uploaded_files %}
+            <li>{{ f }}</li>
+          {% endfor %}
+        </ul>
+
+        <h2>Results</h2>
+        {% if results %}
+          <div class="grid">
+            {% for r in results %}
+              <article class="card result-card">
+                <div class="result-head">
+                  <strong>Document {{ r.doc1 }}</strong> vs <strong>Document {{ r.doc2 }}</strong>
+                  <span class="sim">{{ r.similarity }}%</span>
+                </div>
+                <div class="alert">{{ r.alert|safe }}</div>
+                <div class="highlight">
+                  <h4>Doc {{ r.doc1 }}</h4>
+                  <div class="doc-text">{{ r.highlighted_doc1|safe }}</div>
+                </div>
+                <div class="highlight">
+                  <h4>Doc {{ r.doc2 }}</h4>
+                  <div class="doc-text">{{ r.highlighted_doc2|safe }}</div>
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty">No results yet.</div>
+        {% endif %}
+      </section>
+
+      <p class="muted"><a href="/keywords">Manage keywords</a></p>
+      </div>
+
+      <section id="about" class="card about-section" style="display: none;">
+        <button class="btn-back" id="backBtn">← Back</button>
+        <center><h2>About Us</h2></center>
+        <p>
+          Welcome to our Plagiarism Detection Platform — a tool created to make writing cleaner, more transparent, and truly original. Built by a dedicated team, our website offers quick, reliable, and easy-to-use plagiarism checking for students, writers, educators, and professionals. Our mission is simple: to help you ensure your work reflects your own ideas while giving proper credit where it's due. With accurate scanning and a focus on trust and authenticity, we aim to support better writing and honest creativity. This project is more than just a tool — it's a step toward encouraging a culture of originality.
+        </p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container">&copy; Plagrisim Detector2.O</div>
+    </footer>
+
+    <script>
+      // Initialize display state on page load
+      const textSection = document.getElementById('text-section');
+      const fileSection = document.getElementById('file-section');
+      const mainContent = document.getElementById('mainContent');
+      const aboutSection = document.getElementById('about');
+      const aboutBtn = document.getElementById('aboutBtn');
+      const backBtn = document.getElementById('backBtn');
+      
+      function updateSections(){
+        const isTextMode = document.querySelector('input[name="input_mode"]:checked').value === 'text';
+        if(isTextMode){
+          textSection.style.display = 'block';
+          fileSection.style.display = 'none';
+        } else {
+          textSection.style.display = 'none';
+          fileSection.style.display = 'block';
+        }
+      }
+      
+      // Update on radio button change
+      document.querySelectorAll('input[name="input_mode"]').forEach(function(el){
+        el.addEventListener('change', updateSections);
+      });
+      
+      // About button click handler
+      aboutBtn.addEventListener('click', function(){
+        mainContent.style.display = 'none';
+        aboutSection.style.display = 'block';
+        window.scrollTo(0, 0);
+      });
+      
+      // Back button click handler
+      backBtn.addEventListener('click', function(){
+        mainContent.style.display = 'block';
+        aboutSection.style.display = 'none';
+        window.scrollTo(0, 0);
+      });
+      
+      // Set initial state
+      updateSections();
+    </script>
+
+  </body>
+</html>
